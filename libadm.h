@@ -1,1 +1,19 @@
+#define STUDENT_DATABASE_FILE "/home/daniel/.local/share/adm/database.csv"
 
+#define STUDENT_NAME_MAX_LEN 512
+#define STUDENT_PHONE_MAX_LEN 10
+
+#define STUDENT_DATABASE_LINE_MAX_LEN (STUDENT_NAME_MAX_LEN + STUDENT_PHONE_MAX_LEN + 128)
+
+struct Student;
+
+struct Student {
+
+    int roll;
+    char name[STUDENT_NAME_MAX_LEN - 1];
+    char phone[STUDENT_PHONE_MAX_LEN];
+    struct Student *next;
+
+};
+
+int adm_load_database(const char *db_file_path);
