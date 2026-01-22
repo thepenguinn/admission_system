@@ -20,4 +20,5 @@ int adm_load_database(const char *db_file_path);
 int adm_deload_database(const char *db_file_path);
 
 int adm_write_database(const char *db_file_path);
-int adm_append_database(const int roll, const char *name, const char *phone);
+int adm_append_student(const int roll, const char *name, const char *phone);
+int adm_remove_student(struct Student *student);

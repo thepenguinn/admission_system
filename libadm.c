@@ -182,14 +182,14 @@ int adm_write_database(const char *db_file_path) {
 
 }
 
-int adm_append_database(const int roll, const char *name, const char *phone) {
+int adm_append_student(const int roll, const char *name, const char *phone) {
 
     struct Student *student;
 
     student = malloc(sizeof(struct Student));
     if (student == NULL) {
         adm_logger(ERROR, "malloc() returned NULL");
-        return -1;
+        return 1;
     }
 
     student->name[STUDENT_NAME_MAX_LEN - 1] = '\0';
@@ -212,6 +212,38 @@ int adm_append_database(const int roll, const char *name, const char *phone) {
     return 0;
 }
 
+int adm_remove_student(struct Student *student) {
+
+    struct Student *prev = NULL;
+    struct Student *curr = NULL;
+    struct Student *next = NULL;
+
+    if (student == NULL) {
+        adm_logger(WARN, "adm_remove_student() was called with a NULL student");
+        return 1;
+    }
+
+    for (curr = First_Student; curr && curr != student; curr = curr->next) {
+        prev = curr;
+    }
+
+    if (curr == NULL) {
+        adm_logger(WARN, "Couldn't find student to remove: %p", student);
+        return 1;
+    }
+
+    next = student->next;
+
+    if (prev) {
+        prev->next = student->next;
+    } else {
+
+    }
+
+    return 0;
+
+}
+
 // int adm_write_database(const char *db_file_path) {
 // }
 
@@ -221,9 +253,9 @@ int main() {
 
     struct Student *student;
 
-    adm_append_database(23, "Daniel V Mathew", "1111111111");
+    adm_append_student(23, "Daniel V Mathew", "1111111111");
 
-    adm_append_database(12, "Someone else", "1111111111");
+    adm_append_student(12, "Someone else", "1111111111");
 
     for (student = First_Student; student; student = student->next) {
         printf("%p\n", student);
