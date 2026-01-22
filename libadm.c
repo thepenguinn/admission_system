@@ -132,6 +132,27 @@ int adm_load_database(const char *db_file_path) {
 
 }
 
+int adm_deload_database(const char *db_file_path) {
+
+    struct Student *student, *next;
+
+    if (db_file_path == NULL) {
+        db_file_path = STUDENT_DATABASE_FILE;
+    }
+
+    adm_write_database(db_file_path);
+
+    for (student = First_Student; student; ) {
+        next = student->next;
+        free(student);
+        student = next;
+    }
+
+    First_Student = Last_Student = NULL;
+
+    return 0;
+}
+
 int adm_write_database(const char *db_file_path) {
 
     FILE *file;
@@ -213,7 +234,7 @@ int main() {
         printf("\n");
     }
 
-    adm_write_database(NULL);
+    adm_deload_database(NULL);
 
     return 0;
 }
