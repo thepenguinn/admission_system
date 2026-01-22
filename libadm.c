@@ -84,6 +84,10 @@ int adm_load_database(const char *db_file_path) {
     char line[STUDENT_DATABASE_LINE_MAX_LEN];
     struct Student *student;
 
+    if (db_file_path == NULL) {
+        db_file_path = STUDENT_DATABASE_FILE;
+    }
+
     // adm_logger(WARN, "%s", db_file_path);
 
     if (access(db_file_path, F_OK) != 0) {
@@ -103,7 +107,7 @@ int adm_load_database(const char *db_file_path) {
         student = malloc(sizeof(struct Student));
         if (student == NULL) {
             adm_logger(ERROR, "malloc() returned NULL");
-            return -1;
+            return 1;
         }
 
         adm_parse_line(student, line);
@@ -117,6 +121,40 @@ int adm_load_database(const char *db_file_path) {
         }
         Last_Student = student;
 
+    }
+
+    if (fclose(file) != 0) {
+        adm_logger(ERROR, "fclose() failed");
+        return 1;
+    }
+
+    return 0;
+
+}
+
+int adm_write_database(const char *db_file_path) {
+
+    FILE *file;
+    struct Student *student;
+
+    if (db_file_path == NULL) {
+        db_file_path = STUDENT_DATABASE_FILE;
+    }
+
+    file = fopen(db_file_path, "w+");
+
+    if (file == NULL) {
+        adm_logger(ERROR, "fopen() returned NULL");
+        return 1;
+    }
+
+    for (student = First_Student; student; student = student->next) {
+        fprintf(file, "%d,%s,%s\n", student->roll, student->name, student->phone);
+    }
+
+    if (fclose(file) != 0) {
+        adm_logger(ERROR, "fclose() failed");
+        return 1;
     }
 
     return 0;
@@ -158,11 +196,13 @@ int adm_append_database(const int roll, const char *name, const char *phone) {
 
 int main() {
 
-    adm_load_database(STUDENT_DATABASE_FILE);
+    adm_load_database(NULL);
 
     struct Student *student;
 
     adm_append_database(23, "Daniel V Mathew", "1111111111");
+
+    adm_append_database(12, "Someone else", "1111111111");
 
     for (student = First_Student; student; student = student->next) {
         printf("%p\n", student);
@@ -172,6 +212,8 @@ int main() {
 
         printf("\n");
     }
+
+    adm_write_database(NULL);
 
     return 0;
 }
