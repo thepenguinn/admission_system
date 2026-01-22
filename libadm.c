@@ -69,8 +69,11 @@ static void adm_parse_line(struct Student *student, char *line) {
 
     student->roll = atoi(roll);
 
+    student->name[STUDENT_NAME_MAX_LEN - 1] = '\0';
+    student->phone[STUDENT_PHONE_MAX_LEN - 1] = '\0';
+
     strncpy(student->name, name, STUDENT_NAME_MAX_LEN - 1);
-    strncpy(student->phone, phone, STUDENT_PHONE_MAX_LEN);
+    strncpy(student->phone, phone, STUDENT_PHONE_MAX_LEN - 1);
 
 }
 
@@ -120,11 +123,46 @@ int adm_load_database(const char *db_file_path) {
 
 }
 
+int adm_append_database(const int roll, const char *name, const char *phone) {
+
+    struct Student *student;
+
+    student = malloc(sizeof(struct Student));
+    if (student == NULL) {
+        adm_logger(ERROR, "malloc() returned NULL");
+        return -1;
+    }
+
+    student->name[STUDENT_NAME_MAX_LEN - 1] = '\0';
+    student->phone[STUDENT_PHONE_MAX_LEN - 1] = '\0';
+
+    strncpy(student->name, name, STUDENT_NAME_MAX_LEN - 1);
+    strncpy(student->phone, phone, STUDENT_PHONE_MAX_LEN - 1);
+
+    student->roll = roll;
+
+    student->next = NULL;
+
+    if (First_Student == NULL) {
+        First_Student = student;
+    } else {
+        Last_Student->next = student;
+    }
+    Last_Student = student;
+
+    return 0;
+}
+
+// int adm_write_database(const char *db_file_path) {
+// }
+
 int main() {
 
     adm_load_database(STUDENT_DATABASE_FILE);
 
     struct Student *student;
+
+    adm_append_database(23, "Daniel V Mathew", "1111111111");
 
     for (student = First_Student; student; student = student->next) {
         printf("%p\n", student);
